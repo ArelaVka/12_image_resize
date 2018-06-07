@@ -10,7 +10,12 @@ def get_image(path_to_image):
 
 
 def resize_image(path_to_original, path_to_result):
-    pass
+    img = get_image(path_to_original)
+    file_name, file_ext = os.path.splitext(path_to_original)
+    original_widht, original_heght = img.size
+    new_img_size = int(args.width), int(args.height)
+    new_img = img.resize(new_img_size)
+    new_img.save(path_to_result + file_name + '__' + args.width + 'x' +args.height + file_ext)
 
 
 def get_arguments():
@@ -40,7 +45,7 @@ def get_arguments():
                         help='scale of output image (from 0)')
     parser.add_argument('-o', '--output_directory',
                         metavar='<output_directory>',
-                        dest='output_path',
+                        dest='output_directory',
                         required=False,
                         help='path to output file directory')
     return parser.parse_args()
@@ -49,14 +54,12 @@ def get_arguments():
 
 if __name__ == '__main__':
     args = get_arguments()
+    if args.output_directory:
+        path_to_result = args.output_directory
+    else:
+        path_to_result = ''
     if os.path.isfile(args.input_path):
-        img = get_image(args.input_path)
-        file_name, file_ext = os.path.splitext(args.input_path)
-        img_size = img.size
-        if args.width and args.height:
-            new_img_size = int(args.width), int(args.height)
-            new_img = img.resize(new_img_size)
-            new_img.save(file_name + '__' + args.width + 'x' +
-                         args.height + file_ext)
+        path_to_original = args.input_path
+        resize_image(path_to_original, path_to_result)
     else:
         print('File does not exist')
