@@ -4,20 +4,6 @@ import os
 import glob
 
 
-def get_image(path_to_image):
-    image = Image.open(path_to_image)
-    return image
-
-
-def resize_image(path_to_original, path_to_result):
-    img = get_image(path_to_original)
-    file_name, file_ext = os.path.splitext(path_to_original)
-    original_widht, original_heght = img.size
-    new_img_size = int(args.width), int(args.height)
-    new_img = img.resize(new_img_size)
-    new_img.save(path_to_result + file_name + '__' + args.width + 'x' +args.height + file_ext)
-
-
 def get_arguments():
     parser = argparse.ArgumentParser(
         description='Image resize program')
@@ -48,18 +34,37 @@ def get_arguments():
                         dest='output_directory',
                         required=False,
                         help='path to output file directory')
-    return parser.parse_args()
-    # print(args.accumulate(args.integers))
+    return parser
+
+
+def check_parser_arguments(argument):
+    if argument.scale and argument.scale < 0:
+        argparse.error('ERROR: Scale must be positive')
+
+
+def resize_image(path_to_original, path_to_result):
+    img = get_image(path_to_original)
+    file_name, file_ext = os.path.splitext(path_to_original)
+    original_widht, original_heght = img.size
+    new_img_size = int(args.width), int(args.height)
+    new_img = img.resize(new_img_size)
+    new_img.save(path_to_result + file_name + '__' + args.width + 'x' +args.height + file_ext)
+
+
+def get_image(path_to_image):
+    image = Image.open(path_to_image)
+    return image
 
 
 if __name__ == '__main__':
     args = get_arguments()
-    if args.output_directory:
-        path_to_result = args.output_directory
-    else:
-        path_to_result = ''
-    if os.path.isfile(args.input_path):
-        path_to_original = args.input_path
-        resize_image(path_to_original, path_to_result)
-    else:
-        print('File does not exist')
+    check_parser_arguments(args)
+    # if args.output_directory:
+    #     path_to_result = args.output_directory
+    # else:
+    #     path_to_result = ''
+    # if os.path.isfile(args.input_path):
+    #     path_to_original = args.input_path
+    #     resize_image(path_to_original, path_to_result)
+    # else:
+    #     print('File does not exist')
