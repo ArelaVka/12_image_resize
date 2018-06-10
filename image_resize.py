@@ -48,7 +48,7 @@ def resize_image(path_to_original, path_to_result):
     original_widht, original_heght = img.size
     new_img_size = int(args.width), int(args.height)
     new_img = img.resize(new_img_size)
-    new_img.save(path_to_result + file_name + '__' + args.width + 'x' +args.height + file_ext)
+    # new_img.save(path_to_result + file_name + '__' + args.width + 'x' +args.height + file_ext)
 
 
 def get_image(path_to_image):
