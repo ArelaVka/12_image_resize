@@ -35,21 +35,20 @@ def get_arguments():
                         dest='output_directory',
                         required=False,
                         help='path to output file directory')
-    parser.conflict_handler = check_parser_arguments(parser)
+    #parser.conflict_handler = check_parser_arguments(args)
     return parser.parse_args()
 
 
-def check_parser_arguments(parser):
-    args = parser.parse_args()
+def check_parser_arguments(args):
     if args.input_path and not os.path.isfile(args.input_path):
-        raise parser.error('Input path is not a file')
+        raise argparse.error('Input path is not a file')
     if args.scale and int(args.scale) < 0:
-        raise parser.error('Scale must be positive')
-    if args.scale and (args.width or args.height):
-        raise parser.error('You should not specify width or '
-                           'height with scale together')
+        raise argparse.error('Scale must be positive')
+    if args.scale != 1 and (args.width or args.height):
+        raise argparse.error('You should not specify width or '
+                             'height with scale together')
     if args.output_directory and not(os.path.isdir(args.output_directory)):
-        raise parser.error('Wrong path to output directory')
+        raise argparse.error('Wrong path to output directory')
     # if args.width and args.height:
     #     return 'WARN: The proportions may not coincide with the original image'
 
