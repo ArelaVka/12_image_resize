@@ -1,8 +1,6 @@
 from PIL import Image
 import argparse
 import os
-import sys
-import glob
 
 
 def generate_parser():
@@ -52,7 +50,7 @@ def check_parser_arguments(input_path, width, height, scale,
                            output_directory, parser):
     if input_path and not os.path.isfile(input_path):
         parser.error('Input path is not a file')
-    if scale and scale < 0:
+    if scale and scale <= 0:
         parser.error('Scale must be positive')
     if scale and (width or height):
         parser.error('You should not specify width or height with '
@@ -65,31 +63,30 @@ def get_image(path_to_image):
     return Image.open(path_to_image)
 
 
-def get_new_size(image, args):
-    image_width, image_height = image.size
-    if args.width and not(args.height) and not (args.scale):
-        new_width = int(args.width)
-        new_height = int(image_height * args.width / image_width)
+def get_new_size(image_width, image_height, new_width, new_height, ratio):
+    if new_width and new_height:
         return new_width, new_height
-    elif args.height and not(args.width) and not(args.scale):
-        new_height = int(args.height)
-        new_width = int(image_width * args.height / image_height)
+    elif ratio:
+        new_width = int(image_width * ratio)
+        new_height = int(image_height * ratio)
         return new_width, new_height
-    elif args.scale and not(args.width) and not(args.height):
-        new_width = int(image_width * args.scale)
-        new_height = int(image_height * args.scale)
+    elif new_width:
+        new_height = int(image_height * new_width / image_width)
         return new_width, new_height
-    elif args.width and args.height and not(args.scale):
-        new_width = int(args.width)
-        new_height = int(args.height)
-        print('warn: The proportions may not coincide with the original image')
+    elif new_height:
+        new_width = int(image_width * new_height / image_height)
         return new_width, new_height
     else:
         return image_width, image_height
 
 
-def resize_image(image, new_sizes):
-    return image.resize(new_sizes)
+def is_not_original_proportions(image_width, image_height,
+                                new_width, new_height):
+    return (image_width/new_width) != (image_height/new_height)
+
+
+# def resize_image(image, new_sizes):
+#     return image.resize(new_sizes)
 
 
 def save_resized_image(image_path, resized_image, resized_image_folder,
@@ -98,6 +95,7 @@ def save_resized_image(image_path, resized_image, resized_image_folder,
     path_to_save = '{}{}__{}x{}{}'.format(resized_image_folder, file_name,
                                           width, height, file_ext)
     resized_image.save(path_to_save)
+    print('Image saved:', path_to_save)
 
 
 if __name__ == '__main__':
@@ -106,8 +104,15 @@ if __name__ == '__main__':
     check_parser_arguments(args.input_path, args.width, args.height,
                            args.scale, args.output_directory, parser)
     img = get_image(args.input_path)
-    new_sizes = get_new_size(img, args)
+    original_width, original_height = img.size
+    new_sizes = get_new_size(original_width, original_height,
+                             args.width, args.height, args.scale)
     new_width, new_height = new_sizes
-    new_img = resize_image(img, new_sizes)
+    if args.width and args.height:
+        if is_not_original_proportions(original_width, original_height,
+                                       new_width, new_height):
+            print('warn: The proportions may not '
+                  'coincide with the original image')
+    new_img = img.resize(new_sizes)
     save_resized_image(args.input_path, new_img, args.output_directory,
                        new_width, new_height)
