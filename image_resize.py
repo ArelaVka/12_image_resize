@@ -85,13 +85,12 @@ def is_not_original_proportions(image_width, image_height,
     return image_width/new_width != image_height/new_height
 
 
-def save_resized_image(image_path, resized_image, resized_image_folder,
-                       width, height):
-    file_name, file_ext = os.path.splitext(image_path)
-    path_to_save = '{}{}__{}x{}{}'.format(resized_image_folder, file_name,
-                                          width, height, file_ext)
-    resized_image.save(path_to_save)
-    print('Image saved:', path_to_save)
+def save_resized_image(original_image_name, resized_image, path_to_save):
+    width, height = resized_image.size
+    file_name, file_ext = os.path.splitext(original_image_name)
+    resized_image_name = '{}__{}x{}{}'.format(file_name, width, height, file_ext)
+    resized_image.save(os.path.join(path_to_save, resized_image_name))
+    print('Image saved:', path_to_save, resized_image_name)
 
 
 if __name__ == '__main__':
@@ -110,5 +109,9 @@ if __name__ == '__main__':
             print('warn: The proportions may not '
                   'coincide with the original image')
     new_img = img.resize(new_sizes)
-    save_resized_image(args.input_path, new_img, args.output_directory,
-                       new_width, new_height)
+    if args.output_directory:
+        path_to_save = args.output_directory
+    else:
+        path_to_save = os.path.dirname(args.input_path)
+    original_image_name = os.path.basename(args.input_path)
+    save_resized_image(original_image_name, new_img, path_to_save)
