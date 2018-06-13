@@ -88,7 +88,8 @@ def is_not_original_proportions(image_width, image_height,
 def save_resized_image(original_image_name, resized_image, path_to_save):
     width, height = resized_image.size
     file_name, file_ext = os.path.splitext(original_image_name)
-    resized_image_name = '{}__{}x{}{}'.format(file_name, width, height, file_ext)
+    resized_image_name = '{}__{}x{}{}'.format(file_name, width,
+                                              height, file_ext)
     resized_image.save(os.path.join(path_to_save, resized_image_name))
     print('Image saved:', path_to_save, resized_image_name)
 
