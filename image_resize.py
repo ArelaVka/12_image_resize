@@ -82,11 +82,7 @@ def get_new_size(image_width, image_height, new_width, new_height, ratio):
 
 def is_not_original_proportions(image_width, image_height,
                                 new_width, new_height):
-    return (image_width/new_width) != (image_height/new_height)
-
-
-# def resize_image(image, new_sizes):
-#     return image.resize(new_sizes)
+    return image_width/new_width != image_height/new_height
 
 
 def save_resized_image(image_path, resized_image, resized_image_folder,
