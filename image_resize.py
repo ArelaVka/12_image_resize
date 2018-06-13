@@ -8,32 +8,37 @@ import glob
 def generate_parser():
     parser = argparse.ArgumentParser(
         description='Image resize program')
-    parser.add_argument('-I', '--input_file',
+    parser.add_argument('-I',
+                        '--input_file',
                         type=str,
                         metavar='<path_to_file>',
                         dest='input_path',
                         required=True,
                         help='full path to the image which '
                              'you need to transform')
-    parser.add_argument('-W', '--width',
+    parser.add_argument('-W',
+                        '--width',
                         type=int,
                         metavar='N',
                         dest='width',
                         required=False,
                         help='width of output image (pix)')
-    parser.add_argument('-H', '--height',
+    parser.add_argument('-H',
+                        '--height',
                         type=int,
                         metavar='N',
                         dest='height',
                         required=False,
                         help='height of output image (pix)')
-    parser.add_argument('-S', '--scale',
+    parser.add_argument('-S',
+                        '--scale',
                         type=float,
                         metavar='N',
                         dest='scale',
                         required=False,
                         help='scale of output image (from 0)')
-    parser.add_argument('-O', '--output_directory',
+    parser.add_argument('-O',
+                        '--output_directory',
                         type=str,
                         default='',
                         metavar='<output_directory>',
@@ -47,7 +52,7 @@ def check_parser_arguments(input_path, width, height, scale,
                            output_directory, parser):
     if input_path and not os.path.isfile(input_path):
         parser.error('Input path is not a file')
-    if scale and int(scale) < 0:
+    if scale and scale < 0:
         parser.error('Scale must be positive')
     if scale and (width or height):
         parser.error('You should not specify width or height with '
@@ -90,8 +95,9 @@ def resize_image(image, new_sizes):
 def save_resized_image(image_path, resized_image, resized_image_folder,
                        width, height):
     file_name, file_ext = os.path.splitext(image_path)
-    resized_image.save(resized_image_folder + file_name + '__' +
-                       str(width) + 'x' + str(height) + file_ext)
+    path_to_save = '{}{}__{}x{}{}'.format(resized_image_folder, file_name,
+                                          width, height, file_ext)
+    resized_image.save(path_to_save)
 
 
 if __name__ == '__main__':
