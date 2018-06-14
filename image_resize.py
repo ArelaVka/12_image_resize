@@ -61,12 +61,12 @@ def check_parser_arguments(
         parser.error('Input path is not a file')
     if not(width or height or scale):
         parser.error('You forgot to specify at least one resize parameter')
-    if width and width <= 0:
-        parser.error('Width must be positive')
-    if height and height <= 0:
-        parser.error('Height must be positive')
-    if scale and scale <= 0:
-        parser.error('Scale must be positive')
+    if (
+            (width and width <= 0) or
+            (height and height <= 0) or
+            (scale and scale <= 0)
+    ):
+        parser.error('Size parametrs must be positive')
     if scale and (width or height):
         parser.error('You should not specify width or height with '
                      'scale together')
